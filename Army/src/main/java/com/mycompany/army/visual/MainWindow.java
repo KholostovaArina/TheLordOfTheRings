@@ -239,7 +239,7 @@ public class MainWindow {
 
     private void showOrkInfoDialog(Ork ork) {
         JDialog dialog = new JDialog();
-        dialog.setTitle("Информация об орке - " + ork.getName());
+        dialog.setTitle("Информация об орке - " + ork.getRole() + " " + ork.getName());
         dialog.setSize(450, 400);
         dialog.setLayout(new BorderLayout(10, 10));
 
@@ -298,10 +298,10 @@ public class MainWindow {
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         Color fireRed = new Color(128, 10, 0);
-        addProgressBar(panel, "Сила          :", ork.getStrength(), 100, fireRed);
+        addProgressBar(panel, "Сила         :", ork.getStrength(), 100, fireRed);
         addProgressBar(panel, "Ловкость  :", ork.getAgility(), 100, fireRed);
         addProgressBar(panel, "Интеллект:", ork.getIntelligence(), 100, fireRed);
-        addProgressBar(panel, "Здоровье  :", ork.getHealth(), 100, fireRed);
+        addProgressBar(panel, "Здоровье   :", ork.getHealth(), 100, fireRed);
         return panel;
     }
 

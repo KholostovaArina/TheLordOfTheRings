@@ -1,7 +1,10 @@
 package com.mycompany.army;
 
+import com.github.javafaker.Faker;
+
 public class OrkBuilder {
-    private String name;
+    private final String name = (new Faker()).lordOfTheRings().character();//имена не оч стоит массив делать
+    private String role;
     private Weapon weapon;
     private Armor armor;
     private Banner banner;
@@ -10,8 +13,13 @@ public class OrkBuilder {
     private int intelligence;
     private int health;
 
-    public OrkBuilder setName(String name) {
-        this.name = name;
+//    public OrkBuilder setName(String name) {
+//        this.name = name;
+//        return this;
+//    } 
+    
+    public OrkBuilder setRole(String role) {
+        this.role = role;
         return this;
     }
 
@@ -59,6 +67,6 @@ public class OrkBuilder {
     }
 
     public Ork build() {
-        return new Ork(name, weapon, armor, banner, strength, agility, intelligence, health);
+        return new Ork(name, role, weapon, armor, banner, strength, agility, intelligence, health);
     }
 }

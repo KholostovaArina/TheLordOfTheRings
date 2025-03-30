@@ -1,22 +1,21 @@
-
 package com.mycompany.army;
 
-import com.mycompany.army.*;
-import com.mycompany.army.MordorGearFactory;
+import java.util.Random;
 
 public class MordorOrkBuilderFactory implements OrkBuilderFactory {
     private final OrcGearFactory gearFactory = new MordorGearFactory();
 
     @Override
     public OrkBuilder createOrkBuilder() {
+        Random rand = new Random();
         return new OrkBuilder()
                 .setWeapon(gearFactory.createWeapon())
                 .setArmor(gearFactory.createArmor())
                 .setBanner(gearFactory.createBanner())
-                .setStrength(80)
-                .setAgility(40)
-                .setIntelligence(30)
-                .setHealth(150);
+                .setStrength(rand.nextInt(131))
+                .setAgility(rand.nextInt(70)+1)
+                .setIntelligence(rand.nextInt(50)+1)
+                .setHealth(rand.nextInt(151)+50);
     }
 }
 

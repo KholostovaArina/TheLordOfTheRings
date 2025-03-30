@@ -1,8 +1,7 @@
 
 package com.mycompany.army;
 
-import com.mycompany.army.*;
-import com.mycompany.army.DolGuldurGearFactory;
+import java.util.Random;
 
 
 public class DolGuldurOrkBuilderFactory implements OrkBuilderFactory {
@@ -10,13 +9,14 @@ public class DolGuldurOrkBuilderFactory implements OrkBuilderFactory {
 
     @Override
     public OrkBuilder createOrkBuilder() {
+        Random rand = new Random();
         return new OrkBuilder()
                 .setWeapon(gearFactory.createWeapon())
                 .setArmor(gearFactory.createArmor())
                 .setBanner(gearFactory.createBanner())
-                .setStrength(80)
-                .setAgility(40)
-                .setIntelligence(30)
-                .setHealth(150);
+                .setStrength(rand.nextInt(101))
+                .setAgility(rand.nextInt(100)+1)
+                .setIntelligence(rand.nextInt(50)+1)
+                .setHealth(rand.nextInt(151)+50);
     }
 }
