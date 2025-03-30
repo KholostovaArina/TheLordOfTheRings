@@ -1,3 +1,4 @@
+
 package com.mycompany.army.visual;
 
 import java.awt.Color;

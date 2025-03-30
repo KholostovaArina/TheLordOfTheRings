@@ -1,35 +1,40 @@
 package com.mycompany.army.visual;
 
 import com.mycompany.army.*;
-import com.mycompany.army.MordorOrkBuilderFactory;
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.border.TitledBorder;
+import javax.swing.plaf.FontUIResource;
 
 public class MainWindow {
-    private Image backgroundImage; 
+    private Image backgroundImage;
+    private DefaultMutableTreeNode root;
+    private DefaultTreeModel treeModel;
+    private JTree tree;
+    private Map<String, Map<String, Ork>> orksByTribe = new HashMap<>();
 
     public MainWindow(Font myFont) {
-        
         try {
-            backgroundImage = ImageIO.read(new File("C:\\Users\\GOSPOGA\\OneDrive\\Рабочий стол\\lr\\бумага.jpg"));
-        } catch (IOException e) {
+            backgroundImage = javax.imageio.ImageIO.read(
+                new java.io.File("C:\\Users\\GOSPOGA\\OneDrive\\Рабочий стол\\lr\\бумага.jpg"));
+        } catch (java.io.IOException e) {
             System.err.println("Ошибка загрузки фона: " + e.getMessage());
         }
+        WelcomeWindow.setUIFont(new javax.swing.plaf.FontUIResource(myFont));
 
-        WelcomeWindow.setUIFont(new FontUIResource(myFont));
         JFrame frame = new JFrame("Создание армии орков");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(700, 400);
         frame.setLocationRelativeTo(null);
 
+        // Главная панель с фоном
         JPanel mainPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -40,10 +45,11 @@ public class MainWindow {
             }
         };
         mainPanel.setLayout(new GridBagLayout());
+        mainPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Панель для меток вопросов и радиокнопок
+        // Компоненты интерфейса
         JLabel tribeLbl = new JLabel("Выберите племя орка:");
         tribeLbl.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridx = 0;
@@ -55,27 +61,21 @@ public class MainWindow {
         gbc.gridx = 1;
         mainPanel.add(roleLbl, gbc);
 
-        // Группы радиокнопок (оставил комментарии вашего кода)
-        ButtonGroup leftGroup = new ButtonGroup();
-        JPanel leftRadioPanel = createRadioPanel(leftGroup, "Мордор", "Дол Гулдур", "Мглистые Горы");
+        // Панели с радио-кнопками
+        ButtonGroup tribeGroup = new ButtonGroup();
+        JPanel tribePanel = createRadioPanel(tribeGroup, "Мордор", "Дол Гулдур", "Мглистые Горы");
         gbc.gridx = 0;
         gbc.gridy = 1;
-        mainPanel.add(leftRadioPanel, gbc);
+        mainPanel.add(tribePanel, gbc);
 
-        ButtonGroup rightGroup = new ButtonGroup();
-        JPanel rightRadioPanel = createRadioPanel(rightGroup, "базовый", "командир", "разведчик");
+        ButtonGroup roleGroup = new ButtonGroup();
+        JPanel rolePanel = createRadioPanel(roleGroup, "базовый", "командир", "разведчик");
         gbc.gridx = 1;
-        mainPanel.add(rightRadioPanel, gbc);
+        mainPanel.add(rolePanel, gbc);
 
-        // Кнопка
+        // Кнопка создания
         JButton createButton = new JButton("Создать");
-        createButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //создать орка
-                //добавить орка на JTree
-            }
-        });
+        createButton.addActionListener(createOrkAction(frame, tribeGroup, roleGroup));
         createButton.setBackground(new Color(210, 180, 140));
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -83,39 +83,80 @@ public class MainWindow {
         gbc.anchor = GridBagConstraints.CENTER;
         mainPanel.add(createButton, gbc);
 
-        // Дерево
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Армия орков");
-        String[] tribes = {"Мордор", "Дол Гулдур", "Мглистые Горы"};
-        for (String tribe : tribes) {
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(tribe);
-            node.add(new DefaultMutableTreeNode("Воин 1"));
-            node.add(new DefaultMutableTreeNode("Воин 2"));
-            root.add(node);
-        }
+        // Настройка дерева
+        setupTree();
+        JPanel treePanel = createTreePanel();
 
-        JTree tree = new JTree(root);
-        tree.setBackground(new Color(210, 180, 140));
-        tree.addTreeSelectionListener(e -> {
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-            if (selectedNode != null && selectedNode.isLeaf() && selectedNode.getParent() != root) {
-//                //Ork ork = (Ork) selectedNode.getUserObject();
-//                OrkBuilderFactory mordorFactory = new MordorOrkBuilderFactory();
-//                OrkBuilder builder = mordorFactory.createOrkBuilder();
-//
-//                OrkDirector director = new OrkDirector();
-//                Ork basicOrk = director.createBasicOrk(builder);
-//                System.out.println(basicOrk);
-//                showOrkInfoDialog(basicOrk);
-            }
-        });
-
-        JScrollPane treeScrollPane = new JScrollPane(tree);
-
+        // Добавление компонентов во фрейм
         frame.setLayout(new BorderLayout());
-        frame.add(treeScrollPane, BorderLayout.WEST);
+        frame.add(treePanel, BorderLayout.WEST);
         frame.add(mainPanel, BorderLayout.CENTER);
-
         frame.setVisible(true);
+    }
+
+    private ActionListener createOrkAction(JFrame frame, ButtonGroup tribeGroup, ButtonGroup roleGroup) {
+        return e -> {
+            String selectedTribe = getSelectedButtonText(tribeGroup);
+            String selectedRole = getSelectedButtonText(roleGroup);
+
+            if (selectedTribe == null || selectedRole == null) {
+                JOptionPane.showMessageDialog(frame, "Пожалуйста, выберите племя и роль.", 
+                    "Ошибка", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Ork ork = createOrk(selectedTribe, selectedRole);
+            addOrkToTree(ork, selectedTribe);
+        };
+    }
+
+    private void setupTree() {
+        root = new DefaultMutableTreeNode("Армия орков");
+        treeModel = new DefaultTreeModel(root);
+        tree = new JTree(treeModel);
+        tree.setBackground(new Color(210, 180, 140, 150));
+        tree.setForeground(new Color(50, 50, 50));
+        tree.setOpaque(false);
+        tree.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        tree.addTreeSelectionListener(e -> {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            if (node == null || !node.isLeaf() || node.getParent() == root) return;
+            
+            String orkName = node.getUserObject().toString();
+            String tribe = node.getParent().toString();
+            Ork ork = findOrkByName(orkName, tribe);
+            if (ork != null) showOrkInfoDialog(ork);
+        });
+    }
+
+    private JPanel createTreePanel() {
+        JPanel panel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (backgroundImage != null) {
+                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+        panel.setOpaque(false);
+
+        JScrollPane scrollPane = new JScrollPane(tree);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setPreferredSize(new Dimension(250, 400));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        panel.add(scrollPane);
+        return panel;
+    }
+
+    private void addOrkToTree(Ork ork, String tribe) {
+        DefaultMutableTreeNode tribeNode = findOrCreateTribeNode(root, tribe);
+        tribeNode.add(new DefaultMutableTreeNode(ork.getName()));
+        treeModel.reload();
+        tree.expandPath(new javax.swing.tree.TreePath(tribeNode.getPath()));
     }
 
     private JPanel createRadioPanel(ButtonGroup group, String... options) {
@@ -131,10 +172,75 @@ public class MainWindow {
         return panel;
     }
 
+    private String getSelectedButtonText(ButtonGroup buttonGroup) {
+        for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
+            AbstractButton button = buttons.nextElement();
+            if (button.isSelected()) {
+                return button.getText();
+            }
+        }
+        return null;
+    }
+
+    private Ork createOrk(String tribe, String role) {
+        OrkBuilderFactory factory = createFactoryForTribe(tribe);
+        OrkBuilder builder = factory.createOrkBuilder();
+
+        OrkDirector director = new OrkDirector(builder);
+        Ork ork = null;
+        switch (role) {
+            case "базовый":
+                ork = director.createBasicOrk();
+                break;
+            case "командир":
+                ork = director.createLeaderOrk();
+                break;
+            case "разведчик":
+                ork = director.createScoutOrk();
+                break;
+        }
+
+        // Сохраняем орка в структуре данных
+        orksByTribe
+                .computeIfAbsent(tribe, k -> new HashMap<>())
+                .put(ork.getName(), ork);
+
+        return ork;
+    }
+
+    private OrkBuilderFactory createFactoryForTribe(String tribe) {
+        switch (tribe) {
+            case "Мордор":
+                return new MordorOrkBuilderFactory();
+            case "Дол Гулдур":
+                return new DolGuldurOrkBuilderFactory();
+            case "Мглистые Горы":
+                return new MistyMountainsOrkBuilderFactory();
+            default:
+                throw new IllegalArgumentException("Неизвестное племя: " + tribe);
+        }
+    }
+
+    private DefaultMutableTreeNode findOrCreateTribeNode(DefaultMutableTreeNode root, String tribe) {
+        for (int i = 0; i < root.getChildCount(); i++) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
+            if (child.getUserObject().equals(tribe)) {
+                return child;
+            }
+        }
+        DefaultMutableTreeNode newTribeNode = new DefaultMutableTreeNode(tribe);
+        root.add(newTribeNode);
+        return newTribeNode;
+    }
+
+    private Ork findOrkByName(String name, String tribe) {
+        return orksByTribe.getOrDefault(tribe, new HashMap<>()).get(name);
+    }
+
     private void showOrkInfoDialog(Ork ork) {
         JDialog dialog = new JDialog();
         dialog.setTitle("Информация об орке - " + ork.getName());
-        dialog.setSize(450, 400); 
+        dialog.setSize(450, 400);
         dialog.setLayout(new BorderLayout(10, 10));
 
         // Фоновая панель с изображением
@@ -143,10 +249,9 @@ public class MainWindow {
 
             {
                 try {
-                    // Укажите правильный путь к вашему изображению
-                    bgImage = ImageIO.read(new File("C:\\Users\\GOSPOGA\\OneDrive\\Рабочий стол\\lr\\мрамор.jpg"));
-                } catch (IOException e) {
-                    System.err.println("Ошибка загрузки фона: " + e.getMessage());
+                    bgImage = javax.imageio.ImageIO.read(new java.io.File("C:\\Users\\GOSPOGA\\OneDrive\\Рабочий стол\\lr\\мрамор.jpg"));
+                } catch (Exception ex) {
+                    System.err.println("Ошибка загрузки фона: " + ex.getMessage());
                 }
             }
 
@@ -163,14 +268,14 @@ public class MainWindow {
         // Основной контент
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setOpaque(false); // Делаем панель прозрачной
+        contentPanel.setOpaque(false);
 
         // Заголовок с именем
         JLabel nameLabel = new JLabel(ork.getName());
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         nameLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
         nameLabel.setForeground(Color.WHITE);
-        
+
         // Панель характеристик
         JPanel statsPanel = createStatsPanel(ork);
         statsPanel.setOpaque(false);
@@ -185,7 +290,6 @@ public class MainWindow {
 
         backgroundPanel.add(contentPanel, BorderLayout.CENTER);
         dialog.add(backgroundPanel);
-
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
     }
@@ -193,45 +297,37 @@ public class MainWindow {
     private JPanel createStatsPanel(Ork ork) {
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-
         Color fireRed = new Color(128, 10, 0);
-        addProgressBar(panel, "Сила     :", ork.getStrength(), 100, fireRed);
-        addProgressBar(panel, "Ловкость :", ork.getAgility(), 100, fireRed);
+        addProgressBar(panel, "Сила          :", ork.getStrength(), 100, fireRed);
+        addProgressBar(panel, "Ловкость  :", ork.getAgility(), 100, fireRed);
         addProgressBar(panel, "Интеллект:", ork.getIntelligence(), 100, fireRed);
-        addProgressBar(panel, "Здоровье :", ork.getHealth(), 100, fireRed);
-
+        addProgressBar(panel, "Здоровье  :", ork.getHealth(), 100, fireRed);
         return panel;
     }
 
     private JPanel createGearPanel(Ork ork) {
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
-
-        // Создаем кастомную границу с белым текстом
         TitledBorder border = BorderFactory.createTitledBorder("Снаряжение");
         border.setTitleColor(Color.WHITE);
-        border.setTitleFont(border.getTitleFont().deriveFont(Font.BOLD)); // Жирный шрифт
-
+        border.setTitleFont(border.getTitleFont().deriveFont(Font.BOLD));
         panel.setBorder(BorderFactory.createCompoundBorder(
                 border,
                 BorderFactory.createEmptyBorder(10, 20, 10, 20)
         ));
-
-        addGearLabel(panel, "Оружие: " + ork.getWeapon());
-        addGearLabel(panel, "Броня: " + ork.getArmor());
-        addGearLabel(panel, "Знамя: " + ork.getBanner());
-
+        addGearLabel(panel, "Оружие: " + ork.getWeapon().getName());
+        addGearLabel(panel, "Броня: " + ork.getArmor().getName());
+        addGearLabel(panel, "Знамя: " + ork.getBanner().getName());
         return panel;
     }
 
     private void addGearLabel(JPanel panel, String text) {
         JLabel label = new JLabel(text);
-        label.setForeground(Color.WHITE); // Белый текст для лучшей читаемости
+        label.setForeground(Color.WHITE);
         panel.add(label);
     }
 
     private void addProgressBar(JPanel panel, String label, int value, int max, Color color) {
         JPanel row = new JPanel(new BorderLayout(10, 5));
-
         JLabel textLabel = new JLabel(label);
         JProgressBar progressBar = new JProgressBar(0, max);
         progressBar.setValue(value);
@@ -239,10 +335,19 @@ public class MainWindow {
         progressBar.setStringPainted(true);
         progressBar.setForeground(color);
         progressBar.setBackground(new Color(240, 240, 240));
-
         row.add(textLabel, BorderLayout.WEST);
         row.add(progressBar, BorderLayout.CENTER);
         panel.add(row);
     }
 
+    public static void setUIFont(FontUIResource f) {
+        java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof FontUIResource) {
+                UIManager.put(key, f);
+            }
+        }
+    }
 }
