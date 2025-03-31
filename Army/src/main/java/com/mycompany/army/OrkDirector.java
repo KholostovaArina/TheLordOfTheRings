@@ -1,9 +1,7 @@
-
 package com.mycompany.army;
 
-
 public class OrkDirector {
-    private OrkBuilder builder;
+    private final OrkBuilder builder;
 
     public OrkDirector(OrkBuilder builder) {
         this.builder = builder;

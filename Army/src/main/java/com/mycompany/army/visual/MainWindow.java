@@ -189,15 +189,9 @@ public class MainWindow {
         OrkDirector director = new OrkDirector(builder);
         Ork ork = null;
         switch (role) {
-            case "базовый":
-                ork = director.createBasicOrk();
-                break;
-            case "командир":
-                ork = director.createLeaderOrk();
-                break;
-            case "разведчик":
-                ork = director.createScoutOrk();
-                break;
+            case "базовый" -> ork = director.createBasicOrk();
+            case "командир" -> ork = director.createLeaderOrk();
+            case "разведчик" -> ork = director.createScoutOrk();
         }
 
         // Сохраняем орка в структуре данных
@@ -210,14 +204,16 @@ public class MainWindow {
 
     private OrkBuilderFactory createFactoryForTribe(String tribe) {
         switch (tribe) {
-            case "Мордор":
+            case "Мордор" -> {
                 return new MordorOrkBuilderFactory();
-            case "Дол Гулдур":
+            }
+            case "Дол Гулдур" -> {
                 return new DolGuldurOrkBuilderFactory();
-            case "Мглистые Горы":
+            }
+            case "Мглистые Горы" -> {
                 return new MistyMountainsOrkBuilderFactory();
-            default:
-                throw new IllegalArgumentException("Неизвестное племя: " + tribe);
+            }
+            default -> throw new IllegalArgumentException("Неизвестное племя: " + tribe);
         }
     }
 
