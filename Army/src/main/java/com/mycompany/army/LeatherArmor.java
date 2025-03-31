@@ -1,11 +1,7 @@
 package com.mycompany.army;
 
 public class LeatherArmor implements Armor {
-    private final String name;
-
-    public LeatherArmor(String name) {
-        this.name = name;
-    }
+    private final String name = "Кожаная броня";
 
     @Override
     public String getName() {

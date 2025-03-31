@@ -1,11 +1,7 @@
 package com.mycompany.army;
 
 public class ChainMail implements Armor {
-    private final String name;
-
-    public ChainMail(String name) {
-        this.name = name;
-    }
+    private final String name = "Кольчуга";
 
     @Override
     public String getName() {

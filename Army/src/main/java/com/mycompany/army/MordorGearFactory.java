@@ -3,16 +3,16 @@ package com.mycompany.army;
 public class MordorGearFactory implements OrcGearFactory {
     @Override
     public Weapon createWeapon() {
-        return new HeavySword("Тяжелый меч");
+        return new HeavySword();
     }
 
     @Override
     public Armor createArmor() {
-        return new SteelArmor("Стальная броня");
+        return new SteelArmor();
     }
 
     @Override
     public Banner createBanner() {
-        return new BannerWithRedEye("Знамя с Красным Оком");
+        return new BannerWithRedEye();
     }
 }

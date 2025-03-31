@@ -1,11 +1,7 @@
 package com.mycompany.army;
 
 public class Axe implements Weapon {
-    private final String name;
-
-    public Axe(String name) {
-        this.name = name;
-    }
+    private final String name = "Топор";
 
     @Override
     public String getName() {
