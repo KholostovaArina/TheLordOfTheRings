@@ -11,12 +11,7 @@ public class OrkBuilder {
     private int strength;
     private int agility;
     private int intelligence;
-    private int health;
-
-//    public OrkBuilder setName(String name) {
-//        this.name = name;
-//        return this;
-//    } 
+    private int health; 
     
     public OrkBuilder setRole(String role) {
         this.role = role;

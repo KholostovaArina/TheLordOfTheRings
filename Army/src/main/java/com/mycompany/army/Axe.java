@@ -1,7 +1,4 @@
-
 package com.mycompany.army;
-
-import com.mycompany.army.Weapon;
 
 public class Axe implements Weapon {
     private final String name;

@@ -1,4 +1,3 @@
-
 package com.mycompany.army;
 
 public class BannerWithASpider implements Banner {

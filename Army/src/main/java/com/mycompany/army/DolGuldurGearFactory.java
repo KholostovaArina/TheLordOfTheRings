@@ -1,7 +1,4 @@
-
 package com.mycompany.army;
-
-import com.mycompany.army.OrcGearFactory;
 
 public class DolGuldurGearFactory implements OrcGearFactory {
     @Override

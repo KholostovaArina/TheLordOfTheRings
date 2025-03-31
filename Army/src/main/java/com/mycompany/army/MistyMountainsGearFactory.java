@@ -1,8 +1,4 @@
-
 package com.mycompany.army;
-
-import com.mycompany.army.OrcGearFactory;
-import com.mycompany.army.LeatherArmor;
 
 public class MistyMountainsGearFactory implements OrcGearFactory {
     @Override

@@ -1,8 +1,6 @@
-
 package com.mycompany.army;
 
 import java.util.Random;
-
 
 public class DolGuldurOrkBuilderFactory implements OrkBuilderFactory {
     private final OrcGearFactory gearFactory = new DolGuldurGearFactory();

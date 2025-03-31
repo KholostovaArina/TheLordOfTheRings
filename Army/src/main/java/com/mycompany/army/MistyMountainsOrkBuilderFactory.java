@@ -1,4 +1,3 @@
-
 package com.mycompany.army;
 
 import java.util.Random;

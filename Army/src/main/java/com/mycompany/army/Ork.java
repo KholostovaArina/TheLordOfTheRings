@@ -1,15 +1,15 @@
 package com.mycompany.army;
 
 public class Ork {
-    private String name;
-    private String role;
-    private Weapon weapon;
-    private Armor armor;
-    private Banner banner;
-    private int strength;
-    private int agility;
-    private int intelligence;
-    private int health;
+    private final String name;
+    private final String role;
+    private final Weapon weapon;
+    private final Armor armor;
+    private final Banner banner;
+    private final int strength;
+    private final int agility;
+    private final int intelligence;
+    private final int health;
 
     public Ork(String name, String role, Weapon weapon, Armor armor, Banner banner, int strength, int agility, int intelligence, int health) {
         this.name = name;
@@ -32,18 +32,4 @@ public class Ork {
     public int getAgility() { return agility; }
     public int getIntelligence() { return intelligence; }
     public int getHealth() { return health; }
-
-//    @Override
-//    public String toString() {
-//        return "Ork{" +
-//                "name='" + name + '\'' +
-//                ", weapon=" + weapon.getName() +
-//                ", armor=" + armor.getName() +
-//                ", banner=" + banner.getName() +
-//                ", strength=" + strength +
-//                ", agility=" + agility +
-//                ", intelligence=" + intelligence +
-//                ", health=" + health +
-//                '}';
-//    }
 }
