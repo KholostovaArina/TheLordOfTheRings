@@ -182,8 +182,8 @@ public class MainWindow {
     }
 
     private Ork createOrk(String tribe, String role) {
-        OrkBuilderFactory factory = createFactoryForTribe(tribe);
-        OrkBuilder builder = factory.createOrkBuilder();
+        OrkBuilder builder = createFactoryForTribe(tribe);
+//        OrkBuilder builder = factory.createOrkBuilder();
 
         OrkDirector director = new OrkDirector(builder);
         Ork ork = null;
@@ -201,19 +201,31 @@ public class MainWindow {
         return ork;
     }
 
-    private OrkBuilderFactory createFactoryForTribe(String tribe) {
-        switch (tribe) {
-            case "Мордор" -> {
-                return new MordorOrkBuilderFactory();
-            }
-            case "Дол Гулдур" -> {
-                return new DolGuldurOrkBuilderFactory();
-            }
-            case "Мглистые Горы" -> {
-                return new MistyMountainsOrkBuilderFactory();
-            }
-            default -> throw new IllegalArgumentException("Неизвестное племя: " + tribe);
-        }
+    private OrkBuilder createFactoryForTribe(String tribe) {
+        OrcGearFactory gearFactory = createGearFactory(tribe);
+        return switch (tribe) {
+            case "Мордор" ->
+                new MordorOrkBuilder(gearFactory);
+            case "Дол Гулдур" ->
+                new DolGuldurOrkBuilder(gearFactory);
+            case "Мглистые Горы" ->
+                new MistyMountainsOrkBuilder(gearFactory);
+            default ->
+                throw new IllegalArgumentException("Неизвестное племя: " + tribe);
+        };
+    }
+
+    private static OrcGearFactory createGearFactory(String tribe) {
+        return switch (tribe) {
+            case "Мордор" ->
+                new MordorGearFactory();
+            case "Дол Гулдур" ->
+                new DolGuldurGearFactory();
+            case "Мглистые Горы" ->
+                new MistyMountainsGearFactory();
+            default ->
+                throw new IllegalArgumentException("Неизвестное племя: " + tribe);
+        };
     }
 
     private DefaultMutableTreeNode findOrCreateTribeNode(DefaultMutableTreeNode root, String tribe) {

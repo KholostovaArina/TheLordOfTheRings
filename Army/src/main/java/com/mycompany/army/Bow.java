@@ -1,10 +1,8 @@
 package com.mycompany.army;
 
-public class Bow  implements Weapon {
-    private final String name = "Лук";
-
+public class Bow implements Weapon{
     @Override
-    public String getName() {
-        return name;
+    public String getName(){
+        return "Лук";
     }
 }

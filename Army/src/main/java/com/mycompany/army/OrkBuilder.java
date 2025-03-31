@@ -2,25 +2,31 @@ package com.mycompany.army;
 
 import com.github.javafaker.Faker;
 
-public class OrkBuilder {
-    private final String name = (new Faker()).lordOfTheRings().character();//имена не оч стоит массив делать
-    private String role;
-    private Weapon weapon;
-    private Armor armor;
-    private Banner banner;
-    private int strength;
-    private int agility;
-    private int intelligence;
-    private int health; 
-    private String additionalItem = null;
-    
-    public OrkBuilder setRole(String role) {
-        this.role = role;
+public abstract class OrkBuilder {
+    protected final String name = (new Faker()).lordOfTheRings().character(); // Имя орка
+    protected String role;
+    protected Weapon weapon;
+    protected Armor armor;
+    protected Banner banner;
+    protected int strength;
+    protected int agility;
+    protected int intelligence;
+    protected int health;
+    protected String additionalItem = null;
+
+    protected final OrcGearFactory gearFactory;
+
+    protected OrkBuilder(OrcGearFactory gearFactory) {
+        this.gearFactory = gearFactory;
+    }
+
+    public OrkBuilder setAdditionalItem(String additionalItem) {
+        this.additionalItem = additionalItem;
         return this;
     }
     
-    public OrkBuilder setAdditionalItem(String additionalItem) {
-        this.additionalItem = additionalItem;
+    public OrkBuilder setRole(String role) {
+        this.role = role;
         return this;
     }
 
@@ -59,19 +65,5 @@ public class OrkBuilder {
         return this;
     }
 
-    public int getIntelligence() {
-        return intelligence;
-    }
-
-    public int getAgility() {
-        return agility;
-    }
-
-    public String getAdditionalItem() {
-        return additionalItem;
-    }
-
-    public Ork build() {
-        return new Ork(name, role, weapon, armor, banner, strength, agility, intelligence, health, additionalItem);
-    }
+    public abstract Ork build();
 }
