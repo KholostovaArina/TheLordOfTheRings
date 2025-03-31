@@ -312,6 +312,9 @@ public class MainWindow {
         addGearLabel(panel, "Оружие: " + ork.getWeapon().getName());
         addGearLabel(panel, "Броня: " + ork.getArmor().getName());
         addGearLabel(panel, "Знамя: " + ork.getBanner().getName());
+        if (ork.getAdditionalItem() != null) {
+            addGearLabel(panel, "Д О П: " + ork.getAdditionalItem());
+        }
         return panel;
     }
 

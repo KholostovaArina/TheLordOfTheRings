@@ -12,9 +12,15 @@ public class OrkBuilder {
     private int agility;
     private int intelligence;
     private int health; 
+    private String additionalItem = null;
     
     public OrkBuilder setRole(String role) {
         this.role = role;
+        return this;
+    }
+    
+    public OrkBuilder setAdditionalItem(String additionalItem) {
+        this.additionalItem = additionalItem;
         return this;
     }
 
@@ -61,7 +67,11 @@ public class OrkBuilder {
         return agility;
     }
 
+    public String getAdditionalItem() {
+        return additionalItem;
+    }
+
     public Ork build() {
-        return new Ork(name, role, weapon, armor, banner, strength, agility, intelligence, health);
+        return new Ork(name, role, weapon, armor, banner, strength, agility, intelligence, health, additionalItem);
     }
 }

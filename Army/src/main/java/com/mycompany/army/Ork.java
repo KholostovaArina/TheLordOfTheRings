@@ -10,8 +10,9 @@ public class Ork {
     private final int agility;
     private final int intelligence;
     private final int health;
+    private final String additionalItem;
 
-    public Ork(String name, String role, Weapon weapon, Armor armor, Banner banner, int strength, int agility, int intelligence, int health) {
+    public Ork(String name, String role, Weapon weapon, Armor armor, Banner banner, int strength, int agility, int intelligence, int health, String additionalItem) {
         this.name = name;
         this.role = role;
         this.weapon = weapon;
@@ -21,6 +22,7 @@ public class Ork {
         this.agility = agility;
         this.intelligence = intelligence;
         this.health = health;
+        this.additionalItem = additionalItem;
     }
 
     public String getName() { return name; }
@@ -32,4 +34,5 @@ public class Ork {
     public int getAgility() { return agility; }
     public int getIntelligence() { return intelligence; }
     public int getHealth() { return health; }
+    public String getAdditionalItem() { return additionalItem; }
 }
