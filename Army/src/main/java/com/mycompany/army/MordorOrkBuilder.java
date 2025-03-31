@@ -14,7 +14,7 @@ public class MordorOrkBuilder extends OrkBuilder {
         return new Ork(
                 name,
                 role,
-                gearFactory.createWeapon(),
+                weapon != null ? weapon : gearFactory.createWeapon(),
                 gearFactory.createArmor(),
                 gearFactory.createBanner(),
                 rand.nextInt(130)+1,
