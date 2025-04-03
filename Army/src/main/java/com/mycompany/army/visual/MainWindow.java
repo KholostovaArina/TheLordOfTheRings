@@ -10,24 +10,15 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.border.TitledBorder;
-import javax.swing.plaf.FontUIResource;
 
 public class MainWindow {
-    private Image backgroundImage;
     private DefaultMutableTreeNode root;
     private DefaultTreeModel treeModel;
     private JTree tree;
     private Map<String, Map<String, Ork>> orksByTribe = new HashMap<>();
 
-    public MainWindow(Font myFont) {
-        try {
-            backgroundImage = javax.imageio.ImageIO.read(
-                new java.io.File("C:\\Users\\GOSPOGA\\OneDrive\\Рабочий стол\\lr\\бумага.jpg"));
-        } catch (java.io.IOException e) {
-            System.err.println("Ошибка загрузки фона: " + e.getMessage());
-        }
-        WelcomeWindow.setUIFont(new javax.swing.plaf.FontUIResource(myFont));
-
+    public MainWindow() {
+       
         JFrame frame = new JFrame("Создание армии орков");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(700, 400);
@@ -38,8 +29,8 @@ public class MainWindow {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                if (backgroundImage != null) {
-                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                if (BeautyUtils.getPaperImage() != null) {
+                    g.drawImage(BeautyUtils.getPaperImage(), 0, 0, getWidth(), getHeight(), this);
                 }
             }
         };
@@ -91,6 +82,8 @@ public class MainWindow {
         frame.add(treePanel, BorderLayout.WEST);
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setVisible(true);
+        BeautyUtils.setFontForAllComponents(mainPanel);
+        BeautyUtils.setFontForAllComponents(treePanel);
     }
 
     private ActionListener createOrkAction(JFrame frame, ButtonGroup tribeGroup, ButtonGroup roleGroup) {
@@ -113,7 +106,8 @@ public class MainWindow {
         root = new DefaultMutableTreeNode("Армия орков");
         treeModel = new DefaultTreeModel(root);
         tree = new JTree(treeModel);
-        tree.setBackground(new Color(210, 180, 140, 150));
+        
+        tree.setBackground(new Color(210, 180, 140));
         tree.setForeground(new Color(50, 50, 50));
         tree.setOpaque(false);
         tree.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -121,7 +115,6 @@ public class MainWindow {
         tree.addTreeSelectionListener(e -> {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
             if (node == null || !node.isLeaf() || node.getParent() == root) return;
-            
             String orkName = node.getUserObject().toString();
             String tribe = node.getParent().toString();
             Ork ork = findOrkByName(orkName, tribe);
@@ -134,8 +127,8 @@ public class MainWindow {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                if (backgroundImage != null) {
-                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                if (BeautyUtils.getPaperImage() != null) {
+                    g.drawImage(BeautyUtils.getPaperImage(), 0, 0, getWidth(), getHeight(), this);
                 }
             }
         };
@@ -252,21 +245,11 @@ public class MainWindow {
 
         // Фоновая панель с изображением
         JPanel backgroundPanel = new JPanel() {
-            private Image bgImage;
-
-            {
-                try {
-                    bgImage = javax.imageio.ImageIO.read(new java.io.File("C:\\Users\\GOSPOGA\\OneDrive\\Рабочий стол\\lr\\мрамор.jpg"));
-                } catch (Exception ex) {
-                    System.err.println("Ошибка загрузки фона: " + ex.getMessage());
-                }
-            }
-
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                if (bgImage != null) {
-                    g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
+                if (BeautyUtils.getMramorImage() != null) {
+                    g.drawImage(BeautyUtils.getMramorImage(), 0, 0, getWidth(), getHeight(), this);
                 }
             }
         };
@@ -281,7 +264,7 @@ public class MainWindow {
         JLabel nameLabel = new JLabel(ork.getName());
         nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         nameLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
-        nameLabel.setForeground(Color.WHITE);
+        BeautyUtils.setFontForAllComponents(contentPanel, Color.WHITE);
 
         // Панель характеристик
         JPanel statsPanel = createStatsPanel(ork);
@@ -290,6 +273,7 @@ public class MainWindow {
         // Панель снаряжения
         JPanel gearPanel = createGearPanel(ork);
         gearPanel.setOpaque(false);
+        BeautyUtils.setFontForAllComponents(gearPanel, Color.WHITE);
 
         contentPanel.add(nameLabel);
         contentPanel.add(statsPanel);
@@ -309,12 +293,14 @@ public class MainWindow {
         addProgressBar(panel, "Ловкость  :", ork.getAgility(), 100, fireRed);
         addProgressBar(panel, "Интеллект:", ork.getIntelligence(), 100, fireRed);
         addProgressBar(panel, "Здоровье   :", ork.getHealth(), 100, fireRed);
+        BeautyUtils.setFontForAllComponents(panel);
         return panel;
     }
 
     private JPanel createGearPanel(Ork ork) {
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
         TitledBorder border = BorderFactory.createTitledBorder("Снаряжение");
+        border.setTitleFont(BeautyUtils.getFont());
         border.setTitleColor(Color.WHITE);
         border.setTitleFont(border.getTitleFont().deriveFont(Font.BOLD));
         panel.setBorder(BorderFactory.createCompoundBorder(
@@ -348,16 +334,5 @@ public class MainWindow {
         row.add(textLabel, BorderLayout.WEST);
         row.add(progressBar, BorderLayout.CENTER);
         panel.add(row);
-    }
-
-    public static void setUIFont(FontUIResource f) {
-        java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            Object value = UIManager.get(key);
-            if (value instanceof FontUIResource) {
-                UIManager.put(key, f);
-            }
-        }
     }
 }
