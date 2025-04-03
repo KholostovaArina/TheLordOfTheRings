@@ -1,14 +1,11 @@
 
 package com.mycompany.army;
  
-import com.mycompany.army.visual.WelcomeWindow;
-
-
+import com.mycompany.army.visual.WindowNavigator;
 
 public class Army {
 
     public static void main(String[] args) {
- 
-        WelcomeWindow welcomeWindow = new WelcomeWindow();
+        WindowNavigator controller = new WindowNavigator();
     }
 }

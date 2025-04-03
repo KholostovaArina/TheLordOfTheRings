@@ -1,11 +1,8 @@
-
 package com.mycompany.army.visual;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class WindowLabDescription {
@@ -46,13 +43,6 @@ public class WindowLabDescription {
         okButton = new JButton("OK");
         okButton.setBackground(new Color(0, 30, 0));
         okButton.setAlignmentX(Component.CENTER_ALIGNMENT); // Центрируем кнопку
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               frame.dispose();
-               MainWindow mw = new MainWindow();
-            }
-        });
         
         panel.add(Box.createVerticalStrut(70));
         panel.add(description);
@@ -60,6 +50,6 @@ public class WindowLabDescription {
         
         BeautyUtils.setFontForAllComponents(panel, Color.WHITE);
         frame.add(panel);
-        frame.setVisible(true);
+        frame.setVisible(false);
     }
 }

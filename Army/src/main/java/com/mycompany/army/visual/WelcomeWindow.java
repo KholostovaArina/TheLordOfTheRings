@@ -1,9 +1,7 @@
 package com.mycompany.army.visual;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class WelcomeWindow {
     protected JFrame frame;
@@ -13,7 +11,6 @@ public class WelcomeWindow {
     protected JLabel question;
 
     public WelcomeWindow() {
-         
         frame = new JFrame("Лабораторная работа 2");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 300);
@@ -42,24 +39,9 @@ public class WelcomeWindow {
         buttonPanel.setOpaque(false);
 
         yesButton = new JButton("YES");
-        yesButton.setBackground(new Color(0, 30, 0));
-        yesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               frame.dispose();
-               WindowLabDescription wld = new WindowLabDescription();
-            }
-        });
-        
+        yesButton.setBackground(new Color(0, 30, 0));        
         noButton = new JButton("SKIP");
         noButton.setBackground(new Color(0, 30, 0));
-        noButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               frame.dispose();
-               MainWindow mw = new MainWindow();
-            }
-        });
         
         buttonPanel.add(yesButton);
         buttonPanel.add(noButton);

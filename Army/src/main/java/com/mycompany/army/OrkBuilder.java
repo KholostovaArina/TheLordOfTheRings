@@ -1,9 +1,12 @@
 package com.mycompany.army;
 
 import com.github.javafaker.Faker;
+import java.util.Random;
+import org.apache.commons.lang3.RandomUtils;
 
 public abstract class OrkBuilder {
-    protected final String name = (new Faker()).lordOfTheRings().character(); // Имя орка
+    private final String[] suffixes = {"ur"," gash", "ug","bash","rud", "essa" , "zak"};
+    protected final String name = (new Faker()).lordOfTheRings().character()+suffixes[(new Random()).nextInt(7)]; // Имя орка
     protected String role;
     protected Weapon weapon;
     protected Armor armor;
