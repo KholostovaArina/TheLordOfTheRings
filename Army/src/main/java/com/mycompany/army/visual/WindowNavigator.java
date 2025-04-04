@@ -1,9 +1,9 @@
 package com.mycompany.army.visual;
 
 public class WindowNavigator {
-    private WelcomeWindow welcomeWindow;
-    private WindowLabDescription descriptionWindow;
-    private MainWindow mainWindow;
+    private final WelcomeWindow welcomeWindow;
+    private final WindowLabDescription descriptionWindow;
+    private final MainWindow mainWindow;
 
     public WindowNavigator() {
         welcomeWindow = new WelcomeWindow();

@@ -19,6 +19,7 @@
             <version>1.0.2</version>
         </dependency>
     </dependencies>
+        
     <!-- плагин для создания исполняемого JAR -->
     <build>
         <plugins>

@@ -8,7 +8,7 @@ import javax.swing.*;
 public class WindowLabDescription {
     protected JFrame frame;
     protected JButton okButton;
-    protected JTextArea description;  // Изменяем JTextField на JTextArea
+    protected JTextArea description;  
 
     public WindowLabDescription() {
         frame = new JFrame("Лабораторная работа 2");
